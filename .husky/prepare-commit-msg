@@ -1,9 +1,29 @@
 #!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
 
-if [ -z "$BRANCHES_TO_SKIP" ]; then
-  BRANCHES_TO_SKIP=(main develop release)
+# shell에서 입력받은 argument를 저장
+COMMIT_MESSAGE_FILE_PATH=$1
+COMMIT_SOURCE=$2
+COMMIT_AMEND=$3
+
+# merge 할 때 type/issue 다시 생성되지 않게 함
+if [ "${COMMIT_SOURCE}" = merge ];then
+    exit 0
 fi
 
-BRANCH_NAME=$(git symbolic-ref --short HEAD)
+# amend 할 때 type/issue 다시 생성되지 않게 함
+if [ "${COMMIT_AMEND}" = HEAD ];then
+    exit 0
+fi
 
-echo ${BRANCH_NAME}
+# grep으로 현재 브랜치 긁어오고 sed로 자름
+TYPE=$(git branch | grep '*' | sed 's/* //' | sed 's/\([^/]*\).*/\1/')
+
+if [ "${TYPE}" = "feature" ];then
+    ISSUETYPE="feat"
+fi
+
+ISSUENUMBER=$(git branch | grep '*' | sed 's/* //' | sed 's/^.*\///')
+
+echo "$ISSUETYPE(#$ISSUENUMBER): $(cat "$COMMIT_MESSAGE_FILE_PATH")" > "$COMMIT_MESSAGE_FILE_PATH"
+echo "$(cat .gitmessage.txt)" >> "$COMMIT_MESSAGE_FILE_PATH"
