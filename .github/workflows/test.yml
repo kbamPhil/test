@@ -21,17 +21,26 @@ jobs:
         run:  curl -X POST -H "Content-Type:application/x-www-form-urlencoded" --data-urlencode 'content=프론트엔드 배포시작' "${{ secrets.NATEON_WEBHOOK }}"    
    
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
+      - name: Check out the repo
+        uses: actions/checkout@v3
 
       # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!        
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18   
 
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
-        run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+      - name: Cache Node.js modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.OS }}-node-
+            ${{ runner.OS }}-
+
+      - name: Install dependencies
+        run: npm install
       
       - name: REST API with curl
         run:  curl -X POST -H "Content-Type:application/x-www-form-urlencoded" --data-urlencode 'content=프론트엔드 배포완료' "${{ secrets.NATEON_WEBHOOK }}"    
