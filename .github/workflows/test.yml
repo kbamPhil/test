@@ -19,7 +19,7 @@ jobs:
     
       - name: REST API with curl
         run:  curl -X POST -H "Content-Type:application/x-www-form-urlencoded" \
-          --data-urlencode 
+          --data-urlencode \
           --data '{"content":"프론트엔드 배포 시작"}' \
           ${{secrets.NATEON_WEBHOOK}}
    
