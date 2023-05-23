@@ -18,8 +18,7 @@ jobs:
     steps:
     
       - name: REST API with curl
-        run:  curl -X POST -H "Content-Type:application/x-www-form-urlencoded" --data-urlencode 'content=배포시작' "${{ secrets.NATEON_WEBHOOK }}"
-          
+        run:  curl -X POST -H "Content-Type:application/x-www-form-urlencoded" --data-urlencode 'content=프론트엔드 배포시작' "${{ secrets.NATEON_WEBHOOK }}"    
    
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
@@ -33,3 +32,7 @@ jobs:
         run: |
           echo Add other actions to build,
           echo test, and deploy your project.
+      
+      - name: REST API with curl
+        run:  curl -X POST -H "Content-Type:application/x-www-form-urlencoded" --data-urlencode 'content=프론트엔드 배포완료' "${{ secrets.NATEON_WEBHOOK }}"    
+   
